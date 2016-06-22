@@ -18,7 +18,6 @@ public class ProviderRefData
 	public ProviderRefData()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ProviderRefData(String providerId)
