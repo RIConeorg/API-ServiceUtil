@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import apitester.Init;
 
 /**
@@ -17,6 +20,7 @@ public class ConfigUtil
 {
 	private static ConfigUtil instance = null;
 	private static Properties properties = new Properties();
+	private static Logger logger = LogManager.getLogger();
 
 	public ConfigUtil()
 	{
@@ -33,7 +37,7 @@ public class ConfigUtil
 		}
 		catch (Exception e)
 		{
-			System.out.println("No dice... couldn't find file.");
+			logger.error("No dice... couldn't find file.");
 		}
 	}
 	

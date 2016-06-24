@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -17,6 +16,8 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.X509Certificate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import apitester.common.Account;
 import apitester.common.ProviderRefData;
@@ -56,19 +57,21 @@ public class Init
 	private static List<Long> avgStudentRT = new ArrayList<Long>();
 	private static List<Long> avgContactRT = new ArrayList<Long>();
 	
+	private static Logger logger = LogManager.getLogger();
+	
 	
 	public static void main(String[] args) throws InterruptedException, IOException
 	{
-		System.out.println("Configuring...");
+		logger.info("Configuring...");
 		bypassHttps();
 		if(configure())
 		{
-			System.out.println("~!!!!! Starting Test !!!!!~");
+			logger.info("~!!!!! Starting Test !!!!!~");
 			List<Account> accounts = loadAccounts();
 
 			for(Account account : accounts)
 			{
-				System.out.println("+--- Account Being Tested: " + account.getUsername());
+				logger.info("+--- Account Being Tested: " + account.getUsername());
 
 				Authenticator auth = new Authenticator("https://auth.test.ricone.org/login", account.getUsername(), account.getPassword());
 
@@ -91,7 +94,7 @@ public class Init
 					}
 				}				
 			}
-			System.out.println("~!!!!! Test Over !!!!!~");
+			logger.info("~!!!!! Test Over !!!!!~");
 			
 			printAllStats();
 			
@@ -145,8 +148,6 @@ public class Init
 			runLeaTest = ConfigUtil.getInstance().leaRunTest();
 			leaRunAmount =  ConfigUtil.getInstance().leaRunAmount();
 			
-			System.out.println(ConfigUtil.getInstance().leaGetRefs());
-
 			getSchoolRefs = ConfigUtil.getInstance().schoolGetRefs();
 			schoolsRefAmount = ConfigUtil.getInstance().schoolRefAmount();
 			runSchoolTest = ConfigUtil.getInstance().schoolRunTest();
@@ -189,14 +190,14 @@ public class Init
 			}
 			else
 			{
-				System.out.println("No 'x.runTests' are set to true in config file, try turning one of them on...");
+				logger.error("No 'x.runTests' are set to true in config file, try turning one of them on...");
 				return false;
 			}
 
 		}
 		catch(Exception e)
 		{
-			System.out.println("Error while configuring, try setting some values....");
+			logger.error("Error while configuring, try setting some values....");
 			return false;
 		}
 
@@ -218,13 +219,13 @@ public class Init
 
 	public static void loadRefIds(Account account, RicOneApiClient ricOne, Endpoint endpoint)
 	{
-	    System.out.println("\t\t +--- Loading necessary refIds...");
+	    logger.info("\t\t +--- Loading necessary refIds...");
 
 	    ProviderRefData data = new ProviderRefData(endpoint.getProviderId());
 
 	    if(getLeaRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + leasRefAmount + " xLea refIds...");
+	    	logger.info("\t\t\t +--- Getting " + leasRefAmount + " xLea refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -240,7 +241,7 @@ public class Init
 
 	    if(getSchoolRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + schoolsRefAmount + " xSchool refIds...");
+	    	logger.info("\t\t\t +--- Getting " + schoolsRefAmount + " xSchool refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -255,7 +256,7 @@ public class Init
 
 	    if(getCalendarRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + calendarsRefAmount + " xCalendar refIds...");
+	    	logger.info("\t\t\t +--- Getting " + calendarsRefAmount + " xCalendar refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -270,7 +271,7 @@ public class Init
 
 	    if(getCourseRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + coursesRefAmount + " xCourse refIds...");
+	    	logger.info("\t\t\t +--- Getting " + coursesRefAmount + " xCourse refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -285,7 +286,7 @@ public class Init
 
 	    if(getRosterRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + rostersRefAmount + " xRoster refIds...");
+	    	logger.info("\t\t\t +--- Getting " + rostersRefAmount + " xRoster refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -300,7 +301,7 @@ public class Init
 
 	    if(getStaffRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + staffsRefAmount + " xStaff refIds...");
+	    	logger.info("\t\t\t +--- Getting " + staffsRefAmount + " xStaff refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -315,7 +316,7 @@ public class Init
 
 	    if(getStudentRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + studentsRefAmount + " xStudent refIds...");
+	    	logger.info("\t\t\t +--- Getting " + studentsRefAmount + " xStudent refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -330,7 +331,7 @@ public class Init
 
 	    if(getContactRefs)
 	    {
-	    	System.out.println("\t\t\t +--- Getting " + contactsRefAmount + " xContact refIds...");
+	    	logger.info("\t\t\t +--- Getting " + contactsRefAmount + " xContact refIds...");
 	    	List<String> refs = new ArrayList<String>();
 	    	try
 	    	{
@@ -348,7 +349,7 @@ public class Init
 
 	private static void runTests(Endpoint endpoint, Account account)
 	{
-		System.out.println("\t +--- Testing Provider: " + endpoint.getProviderId());
+		logger.info("\t +--- Testing Provider: " + endpoint.getProviderId());
 	    RicOneApiClient ricOne = new RicOneApiClient(endpoint);
 
 	    loadRefIds(account, ricOne, endpoint);
@@ -397,20 +398,20 @@ public class Init
 		
 	public static void runLeaTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t +--- Running xLea Ref Requests...");
+		logger.info("\t\t +--- Running xLea Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 	
 			try
 			{
 				Date d = new Date();
 				ResponseMulti<XLeaType> response = ricOne.xPress.getXLeas();
 				addAvgTime(d, avgLeaRT);
-				System.out.println("\t\t\t\t +--- getXLea()"  + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXLea()"  + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXLea()"  + " | " + 500);}
 
 			
 			try
@@ -418,9 +419,9 @@ public class Init
 				Date d = new Date();
 				ResponseMulti<XLeaType> response = ricOne.xPress.getXLeas(1, 5);
 				addAvgTime(d, avgLeaRT);
-				System.out.println("\t\t\t\t +--- getXLea(1,5)"  + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXLea(1,5)"  + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXLea(1,5)"  + " | " + 500);}
 
 			
 			try
@@ -428,9 +429,9 @@ public class Init
 				Date d = new Date();
 				ResponseMulti<XLeaType> response = ricOne.xPress.getXLeas(2, 5);
 				addAvgTime(d, avgLeaRT);
-				System.out.println("\t\t\t\t +--- getXLea(2,5)"  + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXLea(2,5)"  + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXLea(2,5)"  + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -438,7 +439,7 @@ public class Init
 				{
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXLea(refId)");
+						logger.info("\t\t\t\t +--- getXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{						
 							try
@@ -446,15 +447,15 @@ public class Init
 								Date d = new Date();
 								ResponseSingle<XLeaType> response = ricOne.xPress.getXLea(refId);
 								addAvgTime(d, avgLeaRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXLeasByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXLeasByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
 							
@@ -463,15 +464,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XLeaType> response = ricOne.xPress.getXLeasByXSchool(refId);								
 								addAvgTime(d, avgLeaRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXLeasByXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXLeasByXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
 							try
@@ -479,15 +480,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XLeaType> response = ricOne.xPress.getXLeasByXRoster(refId);
 								addAvgTime(d, avgLeaRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStaffRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXLeasByXStaff(refId)");
+						logger.info("\t\t\t\t +--- getXLeasByXStaff(refId)");
 						for(String refId : data.getStaffRefs())
 						{
 							try
@@ -495,15 +496,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XLeaType> response = ricOne.xPress.getXLeasByXStaff(refId);
 								addAvgTime(d, avgLeaRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXLeasByXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXLeasByXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
 							try
@@ -511,9 +512,9 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XLeaType> response = ricOne.xPress.getXLeasByXStudent(refId);
 								addAvgTime(d, avgLeaRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -523,38 +524,38 @@ public class Init
 
 	public static void runSchoolTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t +--- Running xSchool Ref Requests...");
+		logger.info("\t\t +--- Running xSchool Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount );
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount );
 
 			try
 			{
 				Date d = new Date();
 				ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchools();
 				addAvgTime(d, avgSchoolRT);
-				System.out.println("\t\t\t\t +--- getXSchools()"  + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXSchools()"  + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXSchools()"  + " | " + 500);}
 
 			try
 			{
 				Date d = new Date();
 				ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchools(1, 5);
 				addAvgTime(d, avgSchoolRT);
-				System.out.println("\t\t\t\t +--- getXSchools(1,5)" + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXSchools(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXSchools(1,5)" + " | " + 500);}
 
 			try
 			{
 				Date d = new Date();
 				ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchools(2, 5);
 				addAvgTime(d, avgSchoolRT);
-				System.out.println("\t\t\t\t +--- getXSchools(2,5)" + " | " + response.getStatusCode());
+				logger.info("\t\t\t\t +--- getXSchools(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXSchools(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -562,7 +563,7 @@ public class Init
 				{
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
 							try
@@ -570,15 +571,15 @@ public class Init
 								Date d = new Date();
 								ResponseSingle<XSchoolType> response = ricOne.xPress.getXSchool(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
 							try
@@ -586,15 +587,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXLea(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getCalendarRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXCalendar(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXCalendar(refId)");
 						for(String refId : data.getCalendarRefs())
 						{		
 							try
@@ -602,15 +603,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXCalendar(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getCourseRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXCourse(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXCourse(refId)");
 						for(String refId : data.getCourseRefs())
 						{						
 							try
@@ -618,15 +619,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXCourse(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
 							try
@@ -634,15 +635,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXRoster(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStaffRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXStaff(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXStaff(refId)");
 						for(String refId : data.getStaffRefs())
 						{		
 							try
@@ -650,15 +651,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXStaff(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
 							try
@@ -666,15 +667,15 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXStudent(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getContactRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXSchoolsByXContact(refId)");
+						logger.info("\t\t\t\t +--- getXSchoolsByXContact(refId)");
 						for(String refId : data.getContactRefs())
 						{				
 							try
@@ -682,9 +683,9 @@ public class Init
 								Date d = new Date();
 								ResponseMulti<XSchoolType> response = ricOne.xPress.getXSchoolsByXContact(refId);
 								addAvgTime(d, avgSchoolRT);
-								System.out.println("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -694,32 +695,38 @@ public class Init
 
 	public static void runCalendarTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xCalendar Ref Requests...");
+		logger.info("\t\t\t +--- Running xCalendar Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 
-			System.out.println("\t\t\t\t +--- getXCalendars()");
 			try
 			{
-				ricOne.xPress.getXCalendars();
+				Date d = new Date();
+				ResponseMulti<XCalendarType> response = ricOne.xPress.getXCalendars();
+				addAvgTime(d, avgCalendarRT);
+				logger.info("\t\t\t\t +--- getXCalendars()" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCalendars()" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXCalendars(1,5)");
 			try
 			{
-				ricOne.xPress.getXCalendars(1, 5);
+				Date d = new Date();
+				ResponseMulti<XCalendarType> response = ricOne.xPress.getXCalendars(1, 5);
+				addAvgTime(d, avgCalendarRT);
+				logger.info("\t\t\t\t +--- getXCalendars(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCalendars(1,5)" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXCalendars(2,5)");
 			try
 			{
-				ricOne.xPress.getXCalendars(2, 5);
+				Date d = new Date();
+				ResponseMulti<XCalendarType> response = ricOne.xPress.getXCalendars(2, 5);
+				addAvgTime(d, avgCalendarRT);
+				logger.info("\t\t\t\t +--- getXCalendars(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCalendars(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -727,79 +734,91 @@ public class Init
 				{
 					if(!data.getCalendarRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCalendar(refId)");
+						logger.info("\t\t\t\t +--- getXCalendar(refId)");
 						for(String refId : data.getCalendarRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCalendar(refId);
+								Date d = new Date();
+								ResponseSingle<XCalendarType> response = ricOne.xPress.getXCalendar(refId);
+								addAvgTime(d, avgCalendarRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCalendarsByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXCalendarsByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCalendarsByXLea(refId);
+								Date d = new Date();
+								ResponseMulti<XCalendarType> response = ricOne.xPress.getXCalendarsByXLea(refId);
+								addAvgTime(d, avgCalendarRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCalendarsByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXCalendarsByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCalendarsByXSchool(refId);
+								Date d = new Date();
+								ResponseMulti<XCalendarType> response = ricOne.xPress.getXCalendarsByXSchool(refId);
+								addAvgTime(d, avgCalendarRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
 			}
 		}
-		System.out.println("Finished xCalendar Ref Requests");
 	}
 
 	public static void runCourseTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xCourse Ref Requests...");
+		logger.info("\t\t\t +--- Running xCourse Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 
-			System.out.println("\t\t\t\t +--- getXCourses()");
 			try
 			{
-				ricOne.xPress.getXCourses();
+				Date d = new Date();
+				ResponseMulti<XCourseType> response = ricOne.xPress.getXCourses();
+				addAvgTime(d, avgCourseRT);
+				logger.info("\t\t\t\t +--- getXCourses()" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCourses()" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXCourses(1,5)");
+			
 			try
 			{
-				ricOne.xPress.getXCourses(1, 5);
+				Date d = new Date();
+				ResponseMulti<XCourseType> response = ricOne.xPress.getXCourses(1, 5);
+				addAvgTime(d, avgCourseRT);
+				logger.info("\t\t\t\t +--- getXCourses(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCourses(1,5)" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXCourses(2,5)");
 			try
 			{
-				ricOne.xPress.getXCourses(2, 5);
+				Date d = new Date();
+				ResponseMulti<XCourseType> response = ricOne.xPress.getXCourses(2, 5);
+				addAvgTime(d, avgCourseRT);
+				logger.info("\t\t\t\t +--- getXCourses(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXCourses(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -807,57 +826,65 @@ public class Init
 				{
 					if(!data.getCourseRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCourse(refId)");
+						logger.info("\t\t\t\t +--- getXCourse(refId)");
 						for(String refId : data.getCourseRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCourse(refId);
+								Date d = new Date();
+								ResponseSingle<XCourseType> response = ricOne.xPress.getXCourse(refId);
+								addAvgTime(d, avgCourseRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCoursesByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXCoursesByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCoursesByXLea(refId);
+								Date d = new Date();
+								ResponseMulti<XCourseType> response = ricOne.xPress.getXCoursesByXLea(refId);
+								addAvgTime(d, avgCourseRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCoursesByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXCoursesByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCoursesByXSchool(refId);
+								Date d = new Date();
+								ResponseMulti<XCourseType> response = ricOne.xPress.getXCoursesByXSchool(refId);
+								addAvgTime(d, avgCourseRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXCoursesByXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXCoursesByXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXCoursesByXRoster(refId);
+								Date d = new Date();
+								ResponseMulti<XCourseType> response = ricOne.xPress.getXCoursesByXRoster(refId);
+								addAvgTime(d, avgCourseRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -867,32 +894,40 @@ public class Init
 
 	public static void runRosterTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xRoster Ref Requests...");
+		logger.info("\t\t\t +--- Running xRoster Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
-
-			System.out.println("\t\t\t\t +--- getXRosters()");
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
+			
 			try
 			{
-				ricOne.xPress.getXRosters();
+				Date d = new Date();
+				ResponseMulti<XRosterType> response = ricOne.xPress.getXRosters();
+				addAvgTime(d, avgRosterRT);
+				logger.info("\t\t\t\t +--- getXRosters()" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXRosters()" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXRosters(1,5)");
+			
 			try
 			{
-				ricOne.xPress.getXRosters(1, 5);
+				Date d = new Date();
+				ResponseMulti<XRosterType> response = ricOne.xPress.getXRosters(1, 5);
+				addAvgTime(d, avgRosterRT);
+				logger.info("\t\t\t\t +--- getXRosters(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXRosters(1,5)" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXRosters(2,5)");
+			
 			try
 			{
-				ricOne.xPress.getXRosters(2, 5);
+				Date d = new Date();
+				ResponseMulti<XRosterType> response = ricOne.xPress.getXRosters(2, 5);
+				addAvgTime(d, avgRosterRT);
+				logger.info("\t\t\t\t +--- getXRosters(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXRosters(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -900,85 +935,97 @@ public class Init
 				{
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRoster(refId);
+								Date d = new Date();
+								ResponseSingle<XRosterType> response = ricOne.xPress.getXRoster(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRostersByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXRostersByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRostersByXLea(refId);
+								Date d = new Date();
+								ResponseMulti<XRosterType> response = ricOne.xPress.getXRostersByXLea(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRostersByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXRostersByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRostersByXSchool(refId);
+								Date d = new Date();
+								ResponseMulti<XRosterType> response = ricOne.xPress.getXRostersByXSchool(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getCourseRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRostersByXCourse(refId)");
+						logger.info("\t\t\t\t +--- getXRostersByXCourse(refId)");
 						for(String refId : data.getCourseRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRostersByXCourse(refId);
+								Date d = new Date();
+								ResponseMulti<XRosterType> response = ricOne.xPress.getXRostersByXCourse(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStaffRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRostersByXStaff(refId)");
+						logger.info("\t\t\t\t +--- getXRostersByXStaff(refId)");
 						for(String refId : data.getStaffRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRostersByXStaff(refId);
+								Date d = new Date();
+								ResponseMulti<XRosterType> response = ricOne.xPress.getXRostersByXStaff(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXRostersByXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXRostersByXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXRostersByXStudent(refId);
+								Date d = new Date();
+								ResponseMulti<XRosterType> response = ricOne.xPress.getXRostersByXStudent(refId);
+								addAvgTime(d, avgRosterRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -988,32 +1035,38 @@ public class Init
 
 	public static void runStaffTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xStaff Ref Requests...");
+		logger.info("\t\t\t +--- Running xStaff Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 
-			System.out.println("\t\t\t\t +--- getXStaffs()");
 			try
 			{
-				ricOne.xPress.getXStaffs();
+				Date d = new Date();
+				ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffs();
+				addAvgTime(d, avgStaffRT);
+				logger.info("\t\t\t\t +--- getXStaffs()" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
-
-			System.out.println("\t\t\t\t +--- getXStaffs(1,5)");
+			catch(Exception e){logger.error("\t\t\t\t +--- getXStaffs()" + " | " + 500);}
+		
 			try
 			{
-				ricOne.xPress.getXStaffs(1, 5);
+				Date d = new Date();
+				ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffs(1, 5);
+				addAvgTime(d, avgStaffRT);
+				logger.info("\t\t\t\t +--- getXStaffs(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
-
-			System.out.println("\t\t\t\t +--- getXStaffs(2,5)");
+			catch(Exception e){logger.error("\t\t\t\t +--- getXStaffs(1,5)" + " | " + 500);}
+			
 			try
 			{
-				ricOne.xPress.getXStaffs(2, 5);
+				Date d = new Date();
+				ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffs(2, 5);
+				addAvgTime(d, avgStaffRT);
+				logger.info("\t\t\t\t +--- getXStaffs(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXStaffs(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -1021,85 +1074,97 @@ public class Init
 				{
 					if(!data.getStaffRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaff(refId)");
+						logger.info("\t\t\t\t +--- getXStaff(refId)");
 						for(String refId : data.getStaffRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaff(refId);
+								Date d = new Date();
+								ResponseSingle<XStaffType> response = ricOne.xPress.getXStaff(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaffsByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXStaffsByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaffsByXLea(refId);
+								Date d = new Date();
+								ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffsByXLea(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaffsByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXStaffsByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaffsByXSchool(refId);
+								Date d = new Date();
+								ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffsByXSchool(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getCourseRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaffsByXCourse(refId)");
+						logger.info("\t\t\t\t +--- getXStaffsByXCourse(refId)");
 						for(String refId : data.getCourseRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaffsByXCourse(refId);
+								Date d = new Date();
+								ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffsByXCourse(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaffsByXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXStaffsByXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaffsByXRoster(refId);
+								Date d = new Date();
+								ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffsByXRoster(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStaffsByXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXStaffsByXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXStaffsByXStudent(refId);
+								Date d = new Date();
+								ResponseMulti<XStaffType> response = ricOne.xPress.getXStaffsByXStudent(refId);
+								addAvgTime(d, avgStaffRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -1109,32 +1174,38 @@ public class Init
 
 	public static void runStudentTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xStudent Ref Requests...");
+		logger.info("\t\t\t +--- Running xStudent Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 
-			System.out.println("\t\t\t\t +--- getXStudents()");
-//			try
-//			{
-				ricOne.xPress.getXStudents();
-//			}
-//			catch(Exception e){}
+			try
+			{
+				Date d = new Date();
+				ResponseMulti<XStudentType> response = ricOne.xPress.getXStudents();
+				addAvgTime(d, avgStudentRT);
+				logger.info("\t\t\t\t +--- getXStudents()" + " | " + response.getStatusCode());
+			}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXStudents()" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXStudents(1,5)");
-//			try
-//			{
-				ricOne.xPress.getXStudents(1, 5);
-//			}
-//			catch(Exception e){}
+			try
+			{
+				Date d = new Date();
+				ResponseMulti<XStudentType> response = ricOne.xPress.getXStudents(1, 5);
+				addAvgTime(d, avgStudentRT);
+				logger.info("\t\t\t\t +--- getXStudents(1,5)" + " | " + response.getStatusCode());
+			}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXStudents(1,5)" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXStudents(2,5)");
-//			try
-//			{
-				ricOne.xPress.getXStudents(2, 5);
-//			}
-//			catch(Exception e){}
+			try
+			{
+				Date d = new Date();
+				ResponseMulti<XStudentType> response = ricOne.xPress.getXStudents(2, 5);
+				addAvgTime(d, avgStudentRT);
+				logger.info("\t\t\t\t +--- getXStudents(2,5)" + " | " + response.getStatusCode());
+			}
+			catch(Exception e){}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -1142,85 +1213,97 @@ public class Init
 				{
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudent(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseSingle<XStudentType> response = ricOne.xPress.getXStudent(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudentsByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXStudentsByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudentsByXLea(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseMulti<XStudentType> response = ricOne.xPress.getXStudentsByXLea(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudentsByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXStudentsByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudentsByXSchool(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseMulti<XStudentType> response = ricOne.xPress.getXStudentsByXSchool(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getRosterRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudentsByXRoster(refId)");
+						logger.info("\t\t\t\t +--- getXStudentsByXRoster(refId)");
 						for(String refId : data.getRosterRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudentsByXRoster(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseMulti<XStudentType> response = ricOne.xPress.getXStudentsByXRoster(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStaffRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudentsByXStaff(refId)");
+						logger.info("\t\t\t\t +--- getXStudentsByXStaff(refId)");
 						for(String refId : data.getStaffRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudentsByXStaff(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseMulti<XStudentType> response = ricOne.xPress.getXStudentsByXStaff(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getContactRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXStudentsByXContact(refId)");
+						logger.info("\t\t\t\t +--- getXStudentsByXContact(refId)");
 						for(String refId : data.getContactRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
-//							try
-//							{
-								ricOne.xPress.getXStudentsByXContact(refId);
-//							}
-//							catch(Exception e){}
+							try
+							{
+								Date d = new Date();
+								ResponseMulti<XStudentType> response = ricOne.xPress.getXStudentsByXContact(refId);
+								addAvgTime(d, avgStudentRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
+							}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -1230,32 +1313,38 @@ public class Init
 
 	public static void runContactTest(Account account, RicOneApiClient ricOne, String providerId, int runAmmount)
 	{
-		System.out.println("\t\t\t +--- Running xContact Ref Requests...");
+		logger.info("\t\t\t +--- Running xContact Ref Requests...");
 
 		for(int i = 1; i <= runAmmount; i++)
 		{
-			System.out.println("\t\t\t +--- Time " + i + " of " + runAmmount);
+			logger.info("\t\t\t +--- Time " + i + " of " + runAmmount);
 
-			System.out.println("\t\t\t\t +--- getXContacts()");
 			try
 			{
-				ricOne.xPress.getXContacts();
+				Date d = new Date();
+				ResponseMulti<XContactType> response = ricOne.xPress.getXContacts();
+				addAvgTime(d, avgContactRT);
+				logger.info("\t\t\t\t +--- getXContacts()" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
-
-			System.out.println("\t\t\t\t +--- getXContacts(1,5)");
+			catch(Exception e){logger.error("\t\t\t\t +--- getXContacts()" + " | " + 500);}
+		
 			try
 			{
-				ricOne.xPress.getXContacts(1, 5);
+				Date d = new Date();
+				ResponseMulti<XContactType> response = ricOne.xPress.getXContacts(1, 5);
+				addAvgTime(d, avgContactRT);
+				logger.info("\t\t\t\t +--- getXContacts(1,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXContacts(1,5)" + " | " + 500);}
 
-			System.out.println("\t\t\t\t +--- getXContacts(2,5)");
 			try
 			{
-				ricOne.xPress.getXContacts(2, 5);
+				Date d = new Date();
+				ResponseMulti<XContactType> response = ricOne.xPress.getXContacts(2, 5);
+				addAvgTime(d, avgContactRT);
+				logger.info("\t\t\t\t +--- getXContacts(2,5)" + " | " + response.getStatusCode());
 			}
-			catch(Exception e){}
+			catch(Exception e){logger.error("\t\t\t\t +--- getXContacts(2,5)" + " | " + 500);}
 
 			for(ProviderRefData data : account.getProviderData())
 			{
@@ -1263,57 +1352,65 @@ public class Init
 				{
 					if(!data.getContactRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXContact(refId)");
+						logger.info("\t\t\t\t +--- getXContact(refId)");
 						for(String refId : data.getContactRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXContact(refId);
+								Date d = new Date();
+								ResponseSingle<XContactType> response = ricOne.xPress.getXContact(refId);
+								addAvgTime(d, avgContactRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getLeaRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXContactsByXLea(refId)");
+						logger.info("\t\t\t\t +--- getXContactsByXLea(refId)");
 						for(String refId : data.getLeaRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXContactsByXLea(refId);
+								Date d = new Date();
+								ResponseMulti<XContactType> response = ricOne.xPress.getXContactsByXLea(refId);
+								addAvgTime(d, avgContactRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getSchoolRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXContactsByXSchool(refId)");
+						logger.info("\t\t\t\t +--- getXContactsByXSchool(refId)");
 						for(String refId : data.getSchoolRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXContactsByXSchool(refId);
+								Date d = new Date();
+								ResponseMulti<XContactType> response = ricOne.xPress.getXContactsByXSchool(refId);
+								addAvgTime(d, avgContactRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 
 					if(!data.getStudentRefs().isEmpty())
 					{
-						System.out.println("\t\t\t\t +--- getXContactsByXStudent(refId)");
+						logger.info("\t\t\t\t +--- getXContactsByXStudent(refId)");
 						for(String refId : data.getStudentRefs())
 						{
-							System.out.println("\t\t\t\t\t +--- " + refId);
 							try
 							{
-								ricOne.xPress.getXContactsByXStudent(refId);
+								Date d = new Date();
+								ResponseMulti<XContactType> response = ricOne.xPress.getXContactsByXStudent(refId);
+								addAvgTime(d, avgContactRT);
+								logger.info("\t\t\t\t\t +--- " + refId + " | " + response.getStatusCode());
 							}
-							catch(Exception e){}
+							catch(Exception e){logger.error("\t\t\t\t\t +--- " + refId + " | " + 500);}
 						}
 					}
 				}
@@ -1325,7 +1422,7 @@ public class Init
 	{
 		XStudentType student = ricOne.xPress.getXStudent("0000DE7C-467E-4072-B327-8C82E4A2EC39").getData();
 		
-		System.out.println(student.getName().getGivenName());
+		logger.info(student.getName().getGivenName());
 	}
 	
 	private static void addAvgTime(Date before, List<Long> out)
@@ -1346,7 +1443,7 @@ public class Init
 			}
 			avg = avg / list.size();
 			Collections.sort(list);
-			System.out.println(objectName + "\t  Avg RT: " + avg + "ms" + " | Lowest RT: " + list.get(0) + "ms | Highest RT: " + list.get(list.size()-1) + "ms");
+			logger.info(objectName + "\t  Avg RT: " + avg + "ms" + " | Lowest RT: " + list.get(0) + "ms | Highest RT: " + list.get(list.size()-1) + "ms");
 		}
 	}
 	
